@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Advanced Voting System</title>
+
+<style>
+body{
+    font-family: Arial;
+    background: linear-gradient(to right,#4facfe,#00f2fe);
+    text-align:center;
+}
+
+.container{
+    background:white;
+    width:500px;
+    margin:auto;
+    margin-top:40px;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 0 15px gray;
+}
+
+h1{
+    margin-bottom:20px;
+}
+
+.candidate{
+    border:2px solid #ddd;
+    padding:15px;
+    margin:15px;
+    border-radius:15px;
+}
+
+img{
+    width:120px;
+    height:120px;
+    border-radius:50%;
+}
+
+button{
+    padding:10px 20px;
+    margin-top:10px;
+    border:none;
+    background:green;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:darkgreen;
+}
+
+button:disabled{
+    background:gray;
+    cursor:not-allowed;
+}
+
+.result{
+    margin-top:20px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.winner{
+    margin-top:20px;
+    font-size:22px;
+    color:red;
+    font-weight:bold;
+}
+
+.share{
+    background:blue;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Online Voting System</h1>
+
+<div class="candidate">
+    <h2>Person 1</h2>
+    <img src="https://i.pinimg.com/736x/43/dd/fe/43ddfe8b211a09f95d999c432d1bed98.jpg">
+    <br>
+    <button onclick="vote(1)">Vote</button>
+</div>
+
+<div class="candidate">
+    <h2>Person 2</h2>
+    <img src="https://knowlepedia.org/images/0/0e/Salman_Khan.jpg">
+    <br>
+    <button onclick="vote(2)">Vote</button>
+</div>
+
+<div class="result">
+<p>Person 1 Votes: <span id="v1">0</span></p>
+<p>Person 2 Votes: <span id="v2">0</span></p>
+</div>
+
+<div class="winner" id="winner"></div>
+
+<button class="share" onclick="shareVote()">Share Voting Link 📤</button>
+
+</div>
+
+<script>
+
+// Auto load votes
+let count1 = parseInt(localStorage.getItem("vote1")) || 0;
+let count2 = parseInt(localStorage.getItem("vote2")) || 0;
+let voted = localStorage.getItem("voted");
+
+// Show saved votes automatically
+document.getElementById("v1").innerText = count1;
+document.getElementById("v2").innerText = count2;
+
+// Disable buttons if already voted
+if(voted){
+    disableVoting();
+}
+
+checkWinner();
+
+function vote(person){
+
+    if(localStorage.getItem("voted")){
+        alert("You already voted!");
+        return;
+    }
+
+    if(person==1){
+        count1++;
+        localStorage.setItem("vote1",count1);
+    }else{
+        count2++;
+        localStorage.setItem("vote2",count2);
+    }
+
+    localStorage.setItem("voted","yes");
+
+    document.getElementById("v1").innerText = count1;
+    document.getElementById("v2").innerText = count2;
+
+    disableVoting();
+    checkWinner();
+}
+
+function disableVoting(){
+    let buttons = document.querySelectorAll("button");
+    buttons.forEach(btn => {
+        if(!btn.classList.contains("share")){
+            btn.disabled = true;
+            btn.innerText = "Voted ✓";
+        }
+    });
+}
+
+function checkWinner(){
+
+    if(count1>count2){
+        document.getElementById("winner").innerText="Winner: Person 1 🏆";
+    }
+    else if(count2>count1){
+        document.getElementById("winner").innerText="Winner: Person 2 🏆";
+    }
+    else{
+        document.getElementById("winner").innerText="Tie 🤝";
+    }
+
+}
+
+function shareVote(){
+
+    let url = window.location.href;
+
+    if (navigator.share) {
+        navigator.share({
+            title: "Vote Now",
+            text: "Vote here now!",
+            url: url
+        });
+    } else {
+        let whatsapp = "https://wa.me/?text=Vote now here 👉 " + url;
+        window.open(whatsapp, "_blank");
+    }
+
+}
+
+</script>
+
+</body>
+</html>
